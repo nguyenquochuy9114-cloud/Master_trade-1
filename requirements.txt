@@ -1,0 +1,8 @@
+python-telegram-bot==20.6
+pandas
+numpy
+pandas_ta
+requests
+matplotlib
+mplfinance
+TA-Lib
