@@ -1,0 +1,4 @@
+libta-lib0
+libta-lib-dev
+libpq-dev
+python3-dev
