@@ -2,7 +2,7 @@ import os
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from data_fetcher import fetch_ohlcv, get_top_coins_by_category
-from analyze import analyze_coin
+from analyzer import analyze_coin
 
 TOKEN = os.getenv("BOT_TOKEN")
 
