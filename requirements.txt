@@ -3,6 +3,9 @@ pandas
 numpy
 pandas_ta
 requests
+python-dotenv
+Flask
+apscheduler
 matplotlib
 mplfinance
-TA-Lib
+ta-lib
