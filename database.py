@@ -1,6 +1,7 @@
 import time
 
 _cache = {}
+
 CACHE_LIFETIME = 60 * 10  # 10 phút
 
 def cache_data(key, data):
@@ -11,4 +12,7 @@ def get_cached_data(key):
 
 def is_cache_fresh(key):
     entry = _cache.get(key)
-    return entry and (time.time() - entry['time'] < CACHE_LIFETIME)
+    if entry and (time.time() - entry['time'] >= CACHE_LIFETIME):
+        _cache.pop(key, None)  # Xóa cache cũ
+        return False
+    return bool(entry and (time.time() - entry['time'] < CACHE_LIFETIME))
