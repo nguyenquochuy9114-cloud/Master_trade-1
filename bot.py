@@ -4,7 +4,7 @@ from telegram.ext import Application, CommandHandler, ContextTypes
 from data_fetcher import fetch_ohlcv
 from analyzer import analyze_coin
 
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
