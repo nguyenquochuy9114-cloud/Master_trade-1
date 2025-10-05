@@ -1,16 +1,25 @@
+import os
 import talib
 import numpy as np
 import pandas as pd
 from utils import plot_candlestick
 from data_fetcher import get_long_short_ratio
+import logging
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 def analyze_coin(df, symbol):
-    if len(df) < 30:
-        return "Dữ liệu không đủ để phân tích."
+    if len(df) < 30 or not all(col in df.columns for col in ['close', 'high', 'low']):
+        logger.warning(f"Insufficient data for {symbol}")
+        return "Dữ liệu không đủ hoặc không hợp lệ để phân tích."
 
-    close = df['close'].values
-    high = df['high'].values
-    low = df['low'].values
+    close = df['close'].fillna(method='ffill').values
+    high = df['high'].fillna(method='ffill').values
+    low = df['low'].fillna(method='ffill').values
+
+    if len(close) < 26:
+        return "Dữ liệu không đủ để tính EMA26."
 
     ema12 = talib.EMA(close, timeperiod=12)[-1]
     ema26 = talib.EMA(close, timeperiod=26)[-1]
@@ -26,6 +35,9 @@ def analyze_coin(df, symbol):
     }
 
     ratio = get_long_short_ratio(symbol.replace('-', '') + 'USDT')
+    if ratio == 1.0:
+        logger.warning(f"Failed to get long/short ratio for {symbol}")
+
     current_price = close[-1]
     sl_long = current_price * 0.99
     tp_long = current_price * 1.04
@@ -35,8 +47,10 @@ def analyze_coin(df, symbol):
     signal = "MUA" if (rsi < 30 and ema12 > ema26) else "BÁN" if (rsi > 70 and ema12 < ema26) else "GIỮ"
     reason = f"EMA12 ({ema12:.4f}) {'trên' if ema12 > ema26 else 'dưới'} EMA26 ({ema26:.4f}), RSI {rsi:.2f} ({'Oversold' if rsi<30 else 'Overbought' if rsi>70 else 'Neutral'}). Long/Short: {ratio:.2f}x."
 
-    chart_path = plot_candlestick(df, symbol, ema12, ema26)
+    chart_path = plot_candlestick(df, symbol, ema12, ema26, output_dir='charts')
+    chart_path = chart_path if chart_path and os.path.exists(chart_path) else None
 
+    logger.info(f"Analyzed {symbol}: Trend={trend}, Signal={signal}")
     return {
         'price': current_price,
         'ema12': ema12, 'ema26': ema26,
@@ -51,7 +65,7 @@ def analyze_coin(df, symbol):
     }
 
 def check_volatility(df_old, df_new, threshold=5.0):
-    if len(df_old) == 0 or len(df_new) == 0:
+    if len(df_old) == 0 or len(df_new) == 0 or 'close' not in df_old.columns or 'close' not in df_new.columns:
         return False
     old_price = df_old['close'].iloc[-1]
     new_price = df_new['close'].iloc[-1]
