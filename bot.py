@@ -4,7 +4,7 @@ from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
 from data_fetcher import fetch_ohlcv, get_top_coins_by_category
 from analyzer import analyze_coin
 
-TOKEN = os.getenv("BOT_TOKEN")
+TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("🚀 Master Trade Bot đã sẵn sàng! Gõ /analyze BTCUSDT để xem phân tích.")
