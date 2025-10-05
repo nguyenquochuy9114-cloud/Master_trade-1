@@ -7,7 +7,7 @@ from analyzer import analyze_coin
 TOKEN = os.getenv("TELEGRAM_TOKEN")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    await update.message.reply_text("🚀 Master Trade Bot đã sẵn sàng! Gõ /analyze BTCUSDT để xem phân tích.")
+await update.message.reply_text("🚀 Master Trade Bot đã sẵn sàng! Gõ /analyze BTCUSDT để xem phân tích.")
 
 async def analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if len(context.args) == 0:
@@ -31,8 +31,8 @@ async def analyze(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"❌ Lỗi: {e}")
 
 app = Application.builder().token(TOKEN).build()
-    app.add_handler(CommandHandler("start", start))
-    app.run_polling()
+app.add_handler(CommandHandler("start", start))
+app.run_polling()
 
 if __name__ == "__main__":
     main()
